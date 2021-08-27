@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Product {
   String id;
   String name;
@@ -30,11 +28,12 @@ class Product {
       );
 
   factory Product.fromJson(Map<String, Object?> json) => Product(
-      id: json["id"]! as String,
-      name: json["name"]! as String,
-      description: json["description"]! as String,
-      sku: json["sku"]! as String,
-      price: (json['price'] as num).toDouble());
+        id: json["id"]! as String,
+        name: json["name"]! as String,
+        description: json["description"]! as String,
+        sku: json["sku"]! as String,
+        price: (json['price'] as num).toDouble(),
+      );
 
   Map<String, dynamic> toJson() => {
         "id": id,

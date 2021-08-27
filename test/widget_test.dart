@@ -7,8 +7,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:shopping_cart/main.dart';
 import 'package:shopping_cart/src/app.dart';
 
 void main() {

@@ -16,12 +16,12 @@ class User {
         name: name ?? this.name,
       );
 
-  factory User.fromMap(Map<String, dynamic> json) => User(
+  factory User.fromJson(Map<String, dynamic> json) => User(
         id: json["id"],
         name: json["name"],
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
       };
