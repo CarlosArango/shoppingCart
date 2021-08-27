@@ -1,7 +1,5 @@
 import 'user.dart';
 
-import 'products.dart';
-
 enum CartStatus { pending, completed }
 
 class Cart {

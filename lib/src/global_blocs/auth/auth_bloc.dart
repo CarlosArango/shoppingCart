@@ -46,6 +46,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         authStatus: AuthStatus.authenticated,
       );
     } catch (e) {
+      print(e);
       yield state.copyWith(
         authStatus: AuthStatus.failure,
         failureMsg: e.toString(),

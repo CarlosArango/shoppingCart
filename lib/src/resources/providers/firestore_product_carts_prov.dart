@@ -12,8 +12,15 @@ class FirestoreProductCartsProvider {
 
   Future<List<QueryDocumentSnapshot<ProductCart>>> getProductsCartByCartId(
       String cartId) async {
-    List<QueryDocumentSnapshot<ProductCart>> products =
-        await productsCollection.get().then((value) => value.docs);
+    final products = await productsCollection
+        .where(
+          "cart_id",
+          isEqualTo: cartId,
+        )
+        .get()
+        .then(
+          (value) => value.docs,
+        );
 
     return products;
   }

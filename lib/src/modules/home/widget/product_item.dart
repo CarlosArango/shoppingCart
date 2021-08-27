@@ -17,8 +17,9 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   void initState() {
-    super.initState();
     _controller = TextEditingController();
+
+    super.initState();
   }
 
   @override
