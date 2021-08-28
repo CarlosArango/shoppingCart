@@ -1,44 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_cart/src/model/products.dart';
-import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
+import 'package:shopping_cart/src/utils/widgets/button_widget.dart';
 
-class ProductItem extends StatefulWidget {
+class ProductItem extends StatelessWidget {
   final Product product;
   final int quantity;
   final bool isLoadedQuantity;
-  final BuildContext? contextP;
+  final VoidCallback onPressAddQuantity;
+  final VoidCallback onPressSubstractQuantity;
+
   const ProductItem({
     Key? key,
     required this.product,
     this.quantity = 0,
     this.isLoadedQuantity = false,
-    this.contextP,
+    required this.onPressAddQuantity,
+    required this.onPressSubstractQuantity,
   }) : super(key: key);
 
   @override
-  _ProductItemState createState() => _ProductItemState();
-}
-
-class _ProductItemState extends State<ProductItem> {
-  late TextEditingController _controller;
-
-  @override
-  void initState() {
-    _controller = TextEditingController();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    _controller.text = widget.quantity.toString();
     return Card(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -54,13 +35,13 @@ class _ProductItemState extends State<ProductItem> {
                 children: [
                   Container(
                     child: Text(
-                      widget.product.name,
+                      product.name,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
                   Container(
                     child: Text(
-                      widget.product.price.toString(),
+                      product.price.toString(),
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
@@ -72,33 +53,22 @@ class _ProductItemState extends State<ProductItem> {
                 Container(
                   width: 25,
                   height: 25,
-                  child: renderButton("-", () {
-                    if (widget.quantity != 0) {
-                      BlocProvider.of<ProductsCartsBloc>(context).add(
-                        ProductCartsSubstract(
-                          product: widget.product,
-                        ),
-                      );
-                    }
-                  }),
+                  child: ButtonWidget(
+                    onPressed: onPressSubstractQuantity,
+                    title: "-",
+                  ),
                 ),
                 Container(
                   alignment: Alignment.center,
                   width: 30,
-                  child: Text(widget.quantity.toString()),
+                  child: Text(quantity.toString()),
                 ),
                 Container(
                   width: 25,
                   height: 25,
-                  child: renderButton(
-                    "+",
-                    () {
-                      BlocProvider.of<ProductsCartsBloc>(context).add(
-                        ProductCartsAdd(
-                          product: widget.product,
-                        ),
-                      );
-                    },
+                  child: ButtonWidget(
+                    onPressed: onPressAddQuantity,
+                    title: "+",
                   ),
                 ),
               ],
@@ -108,24 +78,4 @@ class _ProductItemState extends State<ProductItem> {
       ),
     );
   }
-}
-
-Widget renderButton(String text, VoidCallback onPressed) {
-  return OutlinedButton(
-    style: OutlinedButton.styleFrom(
-      elevation: 6,
-      padding: EdgeInsets.all(0),
-      backgroundColor: Colors.blue,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-      ),
-    ),
-    child: Text(
-      text,
-      style: TextStyle(
-        color: Colors.white,
-      ),
-    ),
-    onPressed: onPressed,
-  );
 }

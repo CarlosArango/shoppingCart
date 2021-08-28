@@ -32,48 +32,77 @@ class CartBody extends StatelessWidget {
 
               final infoCart = getInfoCart(productCarts);
 
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: productCarts.length,
-                      itemBuilder: (context, index) {
-                        final productCart = productCarts[index].data();
-                        return ProductItem(
-                          isLoadedQuantity: true,
-                          product: productCart.product,
-                          quantity: productCart.quantity,
-                        );
-                      },
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
+              return Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
                       children: [
-                        Container(
-                          child: Text("Cantidad de productos:"),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: productCarts.length,
+                          itemBuilder: (context, index) {
+                            final productCart = productCarts[index].data();
+                            return ProductItem(
+                              isLoadedQuantity: true,
+                              product: productCart.product,
+                              quantity: productCart.quantity,
+                              onPressAddQuantity: () {
+                                BlocProvider.of<ProductsCartsBloc>(context).add(
+                                  ProductCartsAdd(
+                                    product: productCart.product,
+                                  ),
+                                );
+                              },
+                              onPressSubstractQuantity: () {
+                                BlocProvider.of<ProductsCartsBloc>(context).add(
+                                  ProductCartsSubstract(
+                                    product: productCart.product,
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                        Container(
-                          child: Text(infoCart['quantities'].toString()),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              child: Text("Cantidad de productos:"),
+                            ),
+                            Container(
+                              child: Text(infoCart['quantities'].toString()),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              child: Text("Total:"),
+                            ),
+                            Container(
+                              child: Text("\$${format(infoCart['total'])}"),
+                            ),
+                          ],
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: Size(double.infinity,
+                                  30), // double.infinity is the width and 30 is the height
+                            ),
+                            child: Text("Hola"),
+                            onPressed: () {},
+                          ),
                         ),
                       ],
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Container(
-                          child: Text("Total:"),
-                        ),
-                        Container(
-                          child: Text("\$${format(infoCart['total'])}"),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
+                  ),
+                ],
               );
             }
 

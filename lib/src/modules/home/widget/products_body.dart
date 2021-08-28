@@ -40,20 +40,38 @@ class HomeBody extends StatelessWidget {
                     return Text("Loading");
                   }
 
-                  return ListView.builder(
-                    itemCount: productsState.products.length,
-                    itemBuilder: (context, index) {
-                      final productCarts = snapshot.data?.docs.toList();
-                      final product = productsState.products[index].data();
+                  return Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: ListView.builder(
+                      itemCount: productsState.products.length,
+                      itemBuilder: (context, index) {
+                        final productCarts = snapshot.data?.docs.toList();
+                        final product = productsState.products[index].data();
 
-                      return ProductItem(
-                        isLoadedQuantity:
-                            productCartsState.productCartsStatus ==
-                                ProductCartsStatus.loaded,
-                        product: product,
-                        quantity: getQuantityByProduct(productCarts!, product),
-                      );
-                    },
+                        return ProductItem(
+                          isLoadedQuantity:
+                              productCartsState.productCartsStatus ==
+                                  ProductCartsStatus.loaded,
+                          product: product,
+                          quantity:
+                              getQuantityByProduct(productCarts!, product),
+                          onPressAddQuantity: () {
+                            BlocProvider.of<ProductsCartsBloc>(context).add(
+                              ProductCartsAdd(
+                                product: product,
+                              ),
+                            );
+                          },
+                          onPressSubstractQuantity: () {
+                            BlocProvider.of<ProductsCartsBloc>(context).add(
+                              ProductCartsSubstract(
+                                product: product,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   );
                 },
               );
