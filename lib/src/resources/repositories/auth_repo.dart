@@ -5,7 +5,7 @@ class AuthRepository {
   final FirebaseAuthProvider? _firebaseAuthProvider;
   AuthRepository({
     FirebaseAuthProvider? firebaseAuthProvider,
-  }) : _firebaseAuthProvider = FirebaseAuthProvider();
+  }) : _firebaseAuthProvider = firebaseAuthProvider ?? FirebaseAuthProvider();
 
   Future<UserCredential?> signInAnonymously() async {
     return await _firebaseAuthProvider?.signInAnonymously();

@@ -6,7 +6,8 @@ class ProductRepository {
   final FirestoreProductProvider? _firestoreProductProvider;
   ProductRepository({
     FirestoreProductProvider? firestoreProductProvider,
-  }) : _firestoreProductProvider = FirestoreProductProvider();
+  }) : _firestoreProductProvider =
+            firestoreProductProvider ?? FirestoreProductProvider();
 
   Future<List<QueryDocumentSnapshot<Product>>> getProducts() async {
     return await _firestoreProductProvider!.getProducts();

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_cart/src/model/products.dart';
+import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
 
 class ProductItem extends StatefulWidget {
-  final Product? product;
+  final Product product;
+  final int quantity;
+  final bool isLoadedQuantity;
+  final BuildContext? contextP;
   const ProductItem({
     Key? key,
-    this.product,
+    required this.product,
+    this.quantity = 0,
+    this.isLoadedQuantity = false,
+    this.contextP,
   }) : super(key: key);
 
   @override
@@ -30,6 +38,7 @@ class _ProductItemState extends State<ProductItem> {
 
   @override
   Widget build(BuildContext context) {
+    _controller.text = widget.quantity.toString();
     return Card(
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -45,13 +54,13 @@ class _ProductItemState extends State<ProductItem> {
                 children: [
                   Container(
                     child: Text(
-                      widget.product!.name,
+                      widget.product.name,
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
                   Container(
                     child: Text(
-                      widget.product!.price.toString(),
+                      widget.product.price.toString(),
                       style: Theme.of(context).textTheme.caption,
                     ),
                   ),
@@ -63,7 +72,15 @@ class _ProductItemState extends State<ProductItem> {
                 Container(
                   width: 30,
                   height: 30,
-                  child: renderButton("-", () {}),
+                  child: renderButton("-", () {
+                    if (widget.quantity != 0) {
+                      BlocProvider.of<ProductsCartsBloc>(context).add(
+                        ProductCartsSubstract(
+                          product: widget.product,
+                        ),
+                      );
+                    }
+                  }),
                 ),
                 Container(
                   width: 50,
@@ -75,7 +92,16 @@ class _ProductItemState extends State<ProductItem> {
                 Container(
                   width: 30,
                   height: 30,
-                  child: renderButton("+", () {}),
+                  child: renderButton(
+                    "+",
+                    () {
+                      BlocProvider.of<ProductsCartsBloc>(context).add(
+                        ProductCartsAdd(
+                          product: widget.product,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

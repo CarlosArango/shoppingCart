@@ -29,10 +29,8 @@ class ProductCart {
   factory ProductCart.fromJson(Map<String, Object?> json) => ProductCart(
         id: json["id"]! as String,
         cartId: json["cart_id"]! as String,
-        product: Product.fromJson(
-          (json['product'] as Product).toJson(),
-        ),
-        quantity: (json['price'] as num).toInt(),
+        product: Product.fromJson(json['product']),
+        quantity: (json['quantity'] as num).toInt(),
       );
 
   Map<String, dynamic> toJson() => {

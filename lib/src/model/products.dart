@@ -27,12 +27,12 @@ class Product {
         price: price ?? this.price,
       );
 
-  factory Product.fromJson(Map<String, Object?> json) => Product(
+  factory Product.fromJson(json) => Product(
         id: json["id"]! as String,
         name: json["name"]! as String,
-        description: json["description"]! as String,
-        sku: json["sku"]! as String,
-        price: (json['price'] as num).toDouble(),
+        description: json!["description"] ?? "N/A",
+        sku: json["sku"] ?? "N/A",
+        price: (json!['price'] as num).toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

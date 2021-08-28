@@ -3,9 +3,9 @@ import 'user.dart';
 enum CartStatus { pending, completed }
 
 class Cart {
-  String id;
-  User user;
-  double total;
+  String? id;
+  User? user;
+  double? total;
   CartStatus status;
 
   Cart({
@@ -30,10 +30,34 @@ class Cart {
 
   factory Cart.fromJson(Map<String, Object?> json) => Cart(
         id: json["id"]! as String,
-        user: User.fromJson(
-          (json['user'] as User).toJson(),
+        user: User(
+          id: json['user_id'] as String,
         ),
         total: (json['total'] as num).toDouble(),
-        status: CartStatus.pending,
+        status: mapStringToCartStatus(json['status'] as String),
       );
+
+  String emunToString(dynamic anyEnum) {
+    return anyEnum.toString().split(".").last;
+  }
+
+  String serviceTypeToString(CartStatus cartStatus) => emunToString(cartStatus);
+
+  static CartStatus mapStringToCartStatus(String cartStatus) {
+    switch (cartStatus) {
+      case "pending":
+        return CartStatus.pending;
+      case "completed":
+        return CartStatus.completed;
+      default:
+        return CartStatus.pending;
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "status": serviceTypeToString(status),
+        "total": total,
+        "user_id": user?.id,
+      };
 }

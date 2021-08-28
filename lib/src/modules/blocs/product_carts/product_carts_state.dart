@@ -3,11 +3,13 @@ part of 'product_carts_bloc.dart';
 enum ProductCartsStatus {
   loading,
   loaded,
+  add,
+  minus,
   failure,
 }
 
 class ProductCartsState extends Equatable {
-  final List<QueryDocumentSnapshot<ProductCart>> productCarts;
+  final Stream<QuerySnapshot<ProductCart>> productCarts;
   final ProductCartsStatus productCartsStatus;
   final String failureMsg;
   const ProductCartsState({
@@ -24,7 +26,7 @@ class ProductCartsState extends Equatable {
   List<Object> get props => [productCarts, productCartsStatus, failureMsg];
 
   ProductCartsState copyWith({
-    List<QueryDocumentSnapshot<ProductCart>>? productCarts,
+    Stream<QuerySnapshot<ProductCart>>? productCarts,
     ProductCartsStatus? productCartsStatus,
     String? failureMsg,
   }) =>
