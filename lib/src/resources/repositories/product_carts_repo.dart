@@ -61,7 +61,10 @@ class ProductCartsRepository {
       }
 
       await _firestoreProductCartsProvider.update(
-        productCart.copyWith(quantity: quantity),
+        productCart.copyWith(
+          quantity: quantity,
+          product: product,
+        ),
         productCart.id,
       );
     }

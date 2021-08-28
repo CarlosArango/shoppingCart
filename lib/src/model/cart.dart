@@ -6,13 +6,13 @@ class Cart {
   String? id;
   User? user;
   double? total;
-  CartStatus status;
+  CartStatus? status;
 
   Cart({
     required this.id,
-    required this.user,
+    this.user,
     required this.total,
-    required this.status,
+    this.status,
   });
 
   Cart copyWith({
@@ -56,7 +56,7 @@ class Cart {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "status": serviceTypeToString(status),
+        "status": serviceTypeToString(status!),
         "total": total,
         "user_id": user?.id,
       };

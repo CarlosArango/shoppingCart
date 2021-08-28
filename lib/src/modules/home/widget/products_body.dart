@@ -6,7 +6,7 @@ import 'package:shopping_cart/src/model/products.dart';
 import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/products/products_bloc.dart';
 
-import 'package:shopping_cart/src/modules/home/widget/product_item.dart';
+import 'package:shopping_cart/src/utils/widgets/product_item.dart';
 import 'package:shopping_cart/src/resources/repositories/carts_repo.dart';
 import 'package:shopping_cart/src/resources/repositories/product_carts_repo.dart';
 import 'package:collection/collection.dart';
@@ -43,7 +43,7 @@ class HomeBody extends StatelessWidget {
                   return ListView.builder(
                     itemCount: productsState.products.length,
                     itemBuilder: (context, index) {
-                      final productCarts = snapshot.data!.docs.toList();
+                      final productCarts = snapshot.data?.docs.toList();
                       final product = productsState.products[index].data();
 
                       return ProductItem(
@@ -51,7 +51,7 @@ class HomeBody extends StatelessWidget {
                             productCartsState.productCartsStatus ==
                                 ProductCartsStatus.loaded,
                         product: product,
-                        quantity: getQuantityByProduct(productCarts, product),
+                        quantity: getQuantityByProduct(productCarts!, product),
                       );
                     },
                   );
