@@ -70,8 +70,8 @@ class _ProductItemState extends State<ProductItem> {
             Row(
               children: [
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 25,
+                  height: 25,
                   child: renderButton("-", () {
                     if (widget.quantity != 0) {
                       BlocProvider.of<ProductsCartsBloc>(context).add(
@@ -83,15 +83,13 @@ class _ProductItemState extends State<ProductItem> {
                   }),
                 ),
                 Container(
-                  width: 50,
-                  child: TextField(
-                    controller: _controller,
-                    textAlign: TextAlign.center,
-                  ),
+                  alignment: Alignment.center,
+                  width: 30,
+                  child: Text(widget.quantity.toString()),
                 ),
                 Container(
-                  width: 30,
-                  height: 30,
+                  width: 25,
+                  height: 25,
                   child: renderButton(
                     "+",
                     () {
@@ -115,12 +113,18 @@ class _ProductItemState extends State<ProductItem> {
 Widget renderButton(String text, VoidCallback onPressed) {
   return OutlinedButton(
     style: OutlinedButton.styleFrom(
-        elevation: 6,
-        padding: EdgeInsets.all(0),
-        backgroundColor: Colors.amber,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+      elevation: 6,
+      padding: EdgeInsets.all(0),
+      backgroundColor: Colors.blue,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4),
+      ),
+    ),
     child: Text(
       text,
+      style: TextStyle(
+        color: Colors.white,
+      ),
     ),
     onPressed: onPressed,
   );
