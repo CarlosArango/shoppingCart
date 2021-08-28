@@ -48,7 +48,10 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
   Stream<ProductCartsState> mapProductsLoadToState(
       ProductCartsLoad event) async* {
     try {
-      final products = _productCartsRepository.getProductsCartByCartId("1");
+      final cart = await _cartsRepository.getCartByUserId(
+          FirebaseAuth.instance.currentUser!.uid, "pending");
+      final products =
+          _productCartsRepository.getProductsCartByCartId(cart!.id);
       yield ProductCartsState(
         productCarts: products,
         failureMsg: '',

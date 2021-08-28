@@ -1,5 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping_cart/src/model/cart.dart';
+import 'package:shopping_cart/src/model/user.dart' as UserModel;
+import 'package:shopping_cart/src/model/products.dart';
 
 class FirestoreCartsProvider {
   final cartsCollection =
@@ -27,6 +30,28 @@ class FirestoreCartsProvider {
         );
     if (carts.length == 0) return null;
     return carts[0];
+  }
+
+  Future<Cart> manageCart(Product product) async {
+    String userUid = FirebaseAuth.instance.currentUser!.uid;
+    final cartDoc = await getCartByUserId(userUid, "pending");
+    if (cartDoc == null) {
+      final cart = Cart(
+        id: "",
+        status: CartStatus.pending,
+        total: 0,
+        user: UserModel.User(id: userUid),
+      );
+      final cartCreated = await create(cart);
+      final cartCopied = cart.copyWith(id: cartCreated.id);
+      await update(
+          cart.copyWith(
+            id: cartCreated.id,
+          ),
+          cartCreated.id);
+      return cartCopied;
+    }
+    return cartDoc.data();
   }
 
   Future<DocumentSnapshot<Cart>> create(Cart cart) async {
