@@ -19,64 +19,55 @@ class HomeBody extends StatelessWidget {
     return BlocConsumer<ProductsBloc, ProductsState>(
       listener: (context, state) {},
       builder: (context, productsState) {
-        return BlocProvider<ProductsCartsBloc>(
-          create: (context) => ProductsCartsBloc(
-            productCartsRepository: ProductCartsRepository(),
-            cartsRepository: CartsRepository(),
-          )..add(
-              ProductCartsLoad(),
-            ),
-          child: BlocBuilder<ProductsCartsBloc, ProductCartsState>(
-            builder: (context, productCartsState) {
-              return StreamBuilder<QuerySnapshot<ProductCart>>(
-                stream: productCartsState.productCarts,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Something went wrong');
-                  }
+        return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
+          builder: (context, productCartsState) {
+            return StreamBuilder<QuerySnapshot<ProductCart>>(
+              stream: productCartsState.productCarts,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Loading");
-                  }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading");
+                }
 
-                  return Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: ListView.builder(
-                      itemCount: productsState.products.length,
-                      itemBuilder: (context, index) {
-                        final productCarts = snapshot.data?.docs.toList();
-                        final product = productsState.products[index].data();
+                return Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: ListView.builder(
+                    itemCount: productsState.products.length,
+                    itemBuilder: (context, index) {
+                      final productCarts = snapshot.data?.docs.toList();
+                      final product = productsState.products[index].data();
 
-                        return ProductItem(
-                          isLoadedQuantity:
-                              productCartsState.productCartsStatus ==
-                                  ProductCartsStatus.loaded,
-                          product: product,
-                          quantity:
-                              getQuantityByProduct(productCarts!, product),
-                          onPressAddQuantity: () {
-                            BlocProvider.of<ProductsCartsBloc>(context).add(
-                              ProductCartsAdd(
-                                product: product,
-                              ),
-                            );
-                          },
-                          onPressSubstractQuantity: () {
-                            BlocProvider.of<ProductsCartsBloc>(context).add(
-                              ProductCartsSubstract(
-                                product: product,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+                      return ProductItem(
+                        isLoadedQuantity:
+                            productCartsState.productCartsStatus ==
+                                ProductCartsStatus.loaded,
+                        product: product,
+                        quantity: getQuantityByProduct(productCarts!, product),
+                        onPressAddQuantity: () {
+                          BlocProvider.of<ProductsCartsBloc>(context).add(
+                            ProductCartsAdd(
+                              product: product,
+                            ),
+                          );
+                        },
+                        onPressSubstractQuantity: () {
+                          BlocProvider.of<ProductsCartsBloc>(context).add(
+                            ProductCartsSubstract(
+                              product: product,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                );
+              },
+            );
+          },
         );
       },
     );
