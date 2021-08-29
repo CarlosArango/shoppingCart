@@ -9,7 +9,7 @@ enum ProductCartsStatus {
 }
 
 class ProductCartsState extends Equatable {
-  final Stream<QuerySnapshot<ProductCart>> productCarts;
+  final List<QueryDocumentSnapshot<ProductCart>> productCarts;
   final ProductCartsStatus productCartsStatus;
   final Product? productSelected;
   final String failureMsg;
@@ -28,7 +28,7 @@ class ProductCartsState extends Equatable {
   List<Object> get props => [productCarts, productCartsStatus, failureMsg];
 
   ProductCartsState copyWith({
-    Stream<QuerySnapshot<ProductCart>>? productCarts,
+    List<QueryDocumentSnapshot<ProductCart>>? productCarts,
     ProductCartsStatus? productCartsStatus,
     String? failureMsg,
     Product? productSelected,

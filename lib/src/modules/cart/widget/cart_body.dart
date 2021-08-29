@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shopping_cart/src/model/product_cart.dart';
 import 'package:shopping_cart/src/modules/blocs/cart/cart_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
 
@@ -17,139 +15,120 @@ class CartBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
       builder: (context, state) {
-        return StreamBuilder<QuerySnapshot<ProductCart>>(
-          stream: state.productCarts,
-          builder: (BuildContext context,
-              AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Cart empty",
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
-                    Container(
-                      width: 150,
-                      child: ButtonWidget(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          title: "Go Home"),
-                    )
-                  ],
+        final productCarts = state.productCarts;
+        if (productCarts.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Cart empty",
+                  style: Theme.of(context).textTheme.headline4,
                 ),
-              );
-            }
-            if (snapshot.hasError) {
-              return Text('Something went wrong');
-            }
-
-            if (snapshot.connectionState == ConnectionState.active) {
-              final productCarts = snapshot.data!.docs
-                  .where((element) => element.data().quantity > 0)
-                  .toList();
-
-              return Stack(
+                Container(
+                  width: 150,
+                  child: ButtonWidget(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      title: "Go Home"),
+                )
+              ],
+            ),
+          );
+        }
+        return Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: productCarts.length,
-                          itemBuilder: (context, index) {
-                            final productCart = productCarts[index].data();
-                            return ProductItem(
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: productCarts.length,
+                    itemBuilder: (context, index) {
+                      final productCart = productCarts[index].data();
+                      return ProductItem(
+                        product: productCart.product,
+                        quantity: productCart.quantity,
+                        onPressAddQuantity: () {
+                          BlocProvider.of<ProductsCartsBloc>(context).add(
+                            ProductCartsAdd(
                               product: productCart.product,
-                              quantity: productCart.quantity,
-                              onPressAddQuantity: () {
-                                BlocProvider.of<ProductsCartsBloc>(context).add(
-                                  ProductCartsAdd(
-                                    product: productCart.product,
-                                  ),
-                                );
-                              },
-                              onPressSubstractQuantity: () {
-                                BlocProvider.of<ProductsCartsBloc>(context).add(
-                                  ProductCartsSubstract(
-                                    product: productCart.product,
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Cantidad de productos",
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                              ),
-                              Text(
-                                UtilCart.getQuantities(productCarts).toString(),
-                                style: Theme.of(context).textTheme.headline5,
-                              ),
-                            ],
+                            ),
+                          );
+                        },
+                        onPressSubstractQuantity: () {
+                          BlocProvider.of<ProductsCartsBloc>(context).add(
+                            ProductCartsSubstract(
+                              product: productCart.product,
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Cantidad de productos",
+                            style: Theme.of(context).textTheme.headline6,
                           ),
                         ),
-                        Divider(),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Total:",
-                                  style: Theme.of(context).textTheme.headline6,
-                                ),
-                              ),
-                              Text(
-                                "\$${format(UtilCart.getTotal(productCarts))}",
-                                style: Theme.of(context).textTheme.headline5,
-                              ),
-                            ],
-                          ),
-                        ),
-                        Divider(
-                          height: 40,
-                          color: Colors.white,
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: ElevatedButton(
-                            child: Text("Comprar"),
-                            onPressed: () {
-                              BlocProvider.of<CartBloc>(context).add(
-                                CartButtonBuyPressed(
-                                  cartId: productCarts[0].data().cartId,
-                                  productsCart: productCarts,
-                                ),
-                              );
-                            },
-                          ),
+                        Text(
+                          UtilCart.getQuantities(productCarts).toString(),
+                          style: Theme.of(context).textTheme.headline5,
                         ),
                       ],
                     ),
                   ),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "Total:",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                        ),
+                        Text(
+                          "\$${format(UtilCart.getTotal(productCarts))}",
+                          style: Theme.of(context).textTheme.headline5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 40,
+                    color: Colors.white,
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      child: Text("Comprar"),
+                      onPressed: () {
+                        BlocProvider.of<CartBloc>(context).add(
+                          CartButtonBuyPressed(
+                            cartId: productCarts[0].data().cartId,
+                            productsCart: productCarts,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
                 ],
-              );
-            }
-
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          },
+              ),
+            ),
+          ],
         );
       },
     );

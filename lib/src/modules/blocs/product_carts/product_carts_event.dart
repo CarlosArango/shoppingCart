@@ -18,6 +18,19 @@ class ProductCartsLoad extends ProductCartsEvent {
   List<Object> get props => [];
 }
 
+class ProductCartsLoadUpdate extends ProductCartsEvent {
+  final List<QueryDocumentSnapshot<ProductCart>> productCarts;
+  const ProductCartsLoadUpdate({
+    required this.productCarts,
+  });
+
+  @override
+  String toString() => 'ProductCartsLoad';
+
+  @override
+  List<Object> get props => [productCarts];
+}
+
 class ProductCartsAdd extends ProductCartsEvent {
   final Product product;
   final bool isFirstTime;
@@ -44,4 +57,14 @@ class ProductCartsSubstract extends ProductCartsEvent {
 
   @override
   List<Object> get props => [product];
+}
+
+class ProductCartsEmpty extends ProductCartsEvent {
+  const ProductCartsEmpty();
+
+  @override
+  String toString() => 'ProductCartsEmpty';
+
+  @override
+  List<Object> get props => [];
 }

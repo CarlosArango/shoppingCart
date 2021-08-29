@@ -16,7 +16,7 @@ part 'product_carts_state.dart';
 class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
   final ProductCartsRepository _productCartsRepository;
   final CartsRepository _cartsRepository;
-
+  StreamSubscription? streamSubscription;
   ProductsCartsBloc({
     required ProductCartsRepository productCartsRepository,
     required CartsRepository cartsRepository,
@@ -24,7 +24,7 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
         _cartsRepository = cartsRepository,
         super(
           ProductCartsState(
-            productCarts: Stream<QuerySnapshot<ProductCart>>.empty(),
+            productCarts: [],
             failureMsg: "",
             productCartsStatus: ProductCartsStatus.loading,
           ),
@@ -36,6 +36,8 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
   ) async* {
     if (event is ProductCartsLoad) {
       yield* mapProductsLoadToState(event);
+    } else if (event is ProductCartsLoadUpdate) {
+      yield* mapProductsLoadUpdateToState(event);
     } else if (event is ProductCartsAdd) {
       yield* mapProductCartsAddToState(event);
     } else if (event is ProductCartsSubstract) {
@@ -43,17 +45,35 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
     }
   }
 
+  @override
+  Future<void> close() {
+    streamSubscription?.cancel();
+    return super.close();
+  }
+
   Stream<ProductCartsState> mapProductsLoadToState(
       ProductCartsLoad event) async* {
     try {
+      streamSubscription?.cancel();
+      yield state.copyWith(productCarts: []);
       final cart = await _cartsRepository.getCartByUserId(
           FirebaseAuth.instance.currentUser!.uid, "pending");
       final products =
           _productCartsRepository.getProductsCartByCartId(cart!.id);
-      yield state.copyWith(
-        productCarts: products,
-        failureMsg: '',
-        productCartsStatus: ProductCartsStatus.loaded,
+
+      streamSubscription = products.listen(
+        (event) {
+          /*  final other = event.docs
+            .map((e) => ProductCart(
+                id: e.data().id,
+                cartId: e.data().cartId,
+                product: e.data().product,
+                quantity: e.data().quantity))
+            .toList(); */
+          add(
+            ProductCartsLoadUpdate(productCarts: event.docs),
+          );
+        },
       );
     } catch (e) {
       yield state.copyWith(
@@ -61,6 +81,15 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
         failureMsg: e.toString(),
       );
     }
+  }
+
+  Stream<ProductCartsState> mapProductsLoadUpdateToState(
+      ProductCartsLoadUpdate event) async* {
+    yield ProductCartsState(
+      productCarts: event.productCarts,
+      productCartsStatus: ProductCartsStatus.loaded,
+      failureMsg: "",
+    );
   }
 
   Stream<ProductCartsState> mapProductCartsAddToState(

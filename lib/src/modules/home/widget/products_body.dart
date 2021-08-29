@@ -18,11 +18,13 @@ class HomeBody extends StatelessWidget {
     return BlocListener<CartBloc, CartState>(
       listener: (context, state) {
         if (state.cartStatus == CartStatus.bought) {
-          BlocProvider.of<ProductsCartsBloc>(context)
-            ..add(
-              ProductCartsLoad(),
-            )
-            ..close();
+          BlocProvider.of<ProductsCartsBloc>(context).add(ProductCartsLoad());
+          Navigator.pop(context);
+
+          final snackBar = SnackBar(
+            content: Text('Your order was created, the cart now is empty'),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }
       },
       child: BlocBuilder<ProductsBloc, ProductsState>(
@@ -34,37 +36,33 @@ class HomeBody extends StatelessWidget {
               itemBuilder: (context, index) {
                 return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
                   builder: (context, state) {
-                    return StreamBuilder<QuerySnapshot<ProductCart>>(
-                      stream: state.productCarts,
-                      initialData: null,
-                      builder: (context,
-                          AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
-                        final productCarts = snapshot.data?.docs.toList();
-                        final product = productsState.products[index].data();
-                        int quantity = productCarts != null
-                            ? getQuantityByProduct(productCarts, product)
-                            : 0;
+                    final productCarts = state.productCarts;
+                    final product = productsState.products[index].data();
+                    int quantity = productCarts.isNotEmpty
+                        ? getQuantityByProduct(productCarts, product)
+                        : 0;
+                    return ProductItem(
+                      product: product,
+                      quantity: state.productCarts.isEmpty &&
+                              state.productSelected?.id == product.id &&
+                              state.productCartsStatus == ProductCartsStatus.add
+                          ? 1
+                          : quantity,
+                      onPressAddQuantity: () {
+                        BlocProvider.of<ProductsCartsBloc>(context).add(
+                          ProductCartsAdd(
+                            product: product,
+                            isFirstTime: productCarts.isEmpty,
+                          ),
+                        );
+                      },
+                      onPressSubstractQuantity: () {
+                        if (quantity <= 0) return;
 
-                        return ProductItem(
-                          product: product,
-                          quantity: quantity,
-                          onPressAddQuantity: () {
-                            BlocProvider.of<ProductsCartsBloc>(context).add(
-                              ProductCartsAdd(
-                                product: product,
-                                isFirstTime: productCarts == null,
-                              ),
-                            );
-                          },
-                          onPressSubstractQuantity: () {
-                            if (quantity <= 0) return;
-
-                            BlocProvider.of<ProductsCartsBloc>(context).add(
-                              ProductCartsSubstract(
-                                product: product,
-                              ),
-                            );
-                          },
+                        BlocProvider.of<ProductsCartsBloc>(context).add(
+                          ProductCartsSubstract(
+                            product: product,
+                          ),
                         );
                       },
                     );
