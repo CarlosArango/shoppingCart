@@ -7,8 +7,6 @@ import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc
 import 'package:shopping_cart/src/modules/blocs/products/products_bloc.dart';
 
 import 'package:shopping_cart/src/utils/widgets/product_item.dart';
-import 'package:shopping_cart/src/resources/repositories/carts_repo.dart';
-import 'package:shopping_cart/src/resources/repositories/product_carts_repo.dart';
 import 'package:collection/collection.dart';
 
 class HomeBody extends StatelessWidget {
@@ -40,14 +38,21 @@ class HomeBody extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final productCarts = snapshot.data?.docs.toList();
                       final product = productsState.products[index].data();
+                      int quantity = productCarts != null
+                          ? getQuantityByProduct(productCarts, product)
+                          : 0;
 
                       return ProductItem(
                         isLoadedQuantity:
                             productCartsState.productCartsStatus ==
                                 ProductCartsStatus.loaded,
                         product: product,
-                        quantity: getQuantityByProduct(productCarts!, product),
+                        quantity: quantity,
                         onPressAddQuantity: () {
+                          if (productCarts == null) {
+                            BlocProvider.of<ProductsCartsBloc>(context)
+                                .add(ProductCartsLoad());
+                          }
                           BlocProvider.of<ProductsCartsBloc>(context).add(
                             ProductCartsAdd(
                               product: product,
@@ -55,11 +60,18 @@ class HomeBody extends StatelessWidget {
                           );
                         },
                         onPressSubstractQuantity: () {
+                          if (quantity == 0) return;
+
+                          if (productCarts == null) {
+                            BlocProvider.of<ProductsCartsBloc>(context)
+                                .add(ProductCartsLoad());
+                          }
                           BlocProvider.of<ProductsCartsBloc>(context).add(
                             ProductCartsSubstract(
                               product: product,
                             ),
                           );
+                          if (productCarts == null) {}
                         },
                       );
                     },

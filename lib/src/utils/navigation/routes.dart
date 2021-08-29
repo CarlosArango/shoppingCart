@@ -26,7 +26,9 @@ Map<String, Widget Function(BuildContext)> mainRoute() {
               child: HomeUI(),
             );
           }
-          return Container(child: Text("Not authenticated"));
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         },
       );
     }

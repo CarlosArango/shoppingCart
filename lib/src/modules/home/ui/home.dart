@@ -62,12 +62,17 @@ class HomeUI extends StatelessWidget {
                                 AsyncSnapshot<QuerySnapshot<ProductCart>>
                                     snapshot) {
                               if (snapshot.connectionState ==
-                                  ConnectionState.active) {
+                                      ConnectionState.active &&
+                                  snapshot.hasData) {
                                 final productCarts =
                                     snapshot.data!.docs.toList();
-                                final infoCart = getInfoCart(productCarts);
+
+                                int quantity = productCarts.length > 0
+                                    ? getInfoCart(productCarts)['quantities']
+                                    : 0;
+
                                 return Text(
-                                  infoCart['quantities'].toString(),
+                                  quantity.toString(),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
