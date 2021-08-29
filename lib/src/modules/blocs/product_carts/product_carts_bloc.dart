@@ -66,9 +66,16 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
   Stream<ProductCartsState> mapProductCartsAddToState(
       ProductCartsAdd productCartsAdd) async* {
     try {
-      _productCartsRepository.addProductQuantity(
+      yield state.copyWith(
+        productCartsStatus: ProductCartsStatus.add,
+        productSelected: productCartsAdd.product,
+      );
+      await _productCartsRepository.addProductQuantity(
         productCartsAdd.product,
       );
+      if (productCartsAdd.isFirstTime) {
+        add(ProductCartsLoad());
+      }
     } catch (e) {
       yield state.copyWith(
         productCartsStatus: ProductCartsStatus.failure,
@@ -80,7 +87,7 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
   Stream<ProductCartsState> mapProductCartsSubstractToState(
       ProductCartsSubstract productCartSubstract) async* {
     try {
-      _productCartsRepository.substractProductCart(
+      await _productCartsRepository.substractProductCart(
         productCartSubstract.product,
       );
     } catch (e) {

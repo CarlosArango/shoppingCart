@@ -5,8 +5,9 @@ int getQuantities(
   List<QueryDocumentSnapshot<ProductCart>> productCarts,
 ) {
   final productsQuantity = productCarts.map((e) => e.data().quantity).toList();
-  final quantities =
-      productsQuantity.reduce((value, element) => value + element);
+  final quantities = productsQuantity.length > 0
+      ? productsQuantity.reduce((value, element) => value + element)
+      : 0;
   return quantities;
 }
 

@@ -20,8 +20,12 @@ class ProductCartsLoad extends ProductCartsEvent {
 
 class ProductCartsAdd extends ProductCartsEvent {
   final Product product;
+  final bool isFirstTime;
 
-  const ProductCartsAdd({required this.product});
+  const ProductCartsAdd({
+    required this.product,
+    this.isFirstTime = false,
+  });
 
   @override
   String toString() => 'ProductCartsAdd';

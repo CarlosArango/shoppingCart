@@ -11,11 +11,13 @@ enum ProductCartsStatus {
 class ProductCartsState extends Equatable {
   final Stream<QuerySnapshot<ProductCart>> productCarts;
   final ProductCartsStatus productCartsStatus;
+  final Product? productSelected;
   final String failureMsg;
   const ProductCartsState({
     required this.productCarts,
     required this.failureMsg,
     required this.productCartsStatus,
+    this.productSelected,
   });
 
   @override
@@ -29,10 +31,12 @@ class ProductCartsState extends Equatable {
     Stream<QuerySnapshot<ProductCart>>? productCarts,
     ProductCartsStatus? productCartsStatus,
     String? failureMsg,
+    Product? productSelected,
   }) =>
       ProductCartsState(
         productCarts: productCarts ?? this.productCarts,
         productCartsStatus: productCartsStatus ?? this.productCartsStatus,
+        productSelected: productSelected ?? this.productSelected,
         failureMsg: failureMsg ?? this.failureMsg,
       );
 }

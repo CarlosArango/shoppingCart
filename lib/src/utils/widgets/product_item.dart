@@ -6,7 +6,7 @@ import 'package:shopping_cart/src/utils/widgets/button_widget.dart';
 class ProductItem extends StatelessWidget {
   final Product product;
   final int quantity;
-  final bool isLoadedQuantity;
+
   final VoidCallback onPressAddQuantity;
   final VoidCallback onPressSubstractQuantity;
 
@@ -14,7 +14,6 @@ class ProductItem extends StatelessWidget {
     Key? key,
     required this.product,
     this.quantity = 0,
-    this.isLoadedQuantity = false,
     required this.onPressAddQuantity,
     required this.onPressSubstractQuantity,
   }) : super(key: key);

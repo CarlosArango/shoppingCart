@@ -56,6 +56,11 @@ class CartBloc extends Bloc<CartEvent, CartState> {
         cartStatus: CartStatus.bought,
         failureMsg: '',
       );
-    } catch (e) {}
+    } catch (e) {
+      yield state.copyWith(
+        cartStatus: CartStatus.failure,
+        failureMsg: e.toString(),
+      );
+    }
   }
 }

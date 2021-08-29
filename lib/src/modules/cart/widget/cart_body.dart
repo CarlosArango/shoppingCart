@@ -63,7 +63,6 @@ class CartBody extends StatelessWidget {
                           itemBuilder: (context, index) {
                             final productCart = productCarts[index].data();
                             return ProductItem(
-                              isLoadedQuantity: true,
                               product: productCart.product,
                               quantity: productCart.quantity,
                               onPressAddQuantity: () {

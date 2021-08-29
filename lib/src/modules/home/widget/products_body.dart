@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_cart/src/model/product_cart.dart';
 import 'package:shopping_cart/src/model/products.dart';
+import 'package:shopping_cart/src/modules/blocs/cart/cart_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/products/products_bloc.dart';
 
@@ -16,73 +15,66 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProductsBloc, ProductsState>(
-      builder: (context, productsState) {
-        return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
-          builder: (context, productCartsState) {
-            return StreamBuilder<QuerySnapshot<ProductCart>>(
-              stream: productCartsState.productCarts,
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
-                if (snapshot.hasError) {
-                  return Text('Something went wrong');
-                }
+    return BlocListener<CartBloc, CartState>(
+      listener: (context, state) {
+        if (state.cartStatus == CartStatus.bought) {
+          BlocProvider.of<ProductsCartsBloc>(context)
+            ..add(
+              ProductCartsLoad(),
+            )
+            ..close();
+        }
+      },
+      child: BlocBuilder<ProductsBloc, ProductsState>(
+        builder: (context, productsState) {
+          return Padding(
+            padding: const EdgeInsets.all(15),
+            child: ListView.builder(
+              itemCount: productsState.products.length,
+              itemBuilder: (context, index) {
+                return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
+                  builder: (context, state) {
+                    return StreamBuilder<QuerySnapshot<ProductCart>>(
+                      stream: state.productCarts,
+                      initialData: null,
+                      builder: (context,
+                          AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
+                        final productCarts = snapshot.data?.docs.toList();
+                        final product = productsState.products[index].data();
+                        int quantity = productCarts != null
+                            ? getQuantityByProduct(productCarts, product)
+                            : 0;
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("Loading");
-                }
+                        return ProductItem(
+                          product: product,
+                          quantity: quantity,
+                          onPressAddQuantity: () {
+                            BlocProvider.of<ProductsCartsBloc>(context).add(
+                              ProductCartsAdd(
+                                product: product,
+                                isFirstTime: productCarts == null,
+                              ),
+                            );
+                          },
+                          onPressSubstractQuantity: () {
+                            if (quantity <= 0) return;
 
-                return Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: ListView.builder(
-                    itemCount: productsState.products.length,
-                    itemBuilder: (context, index) {
-                      final productCarts = snapshot.data?.docs.toList();
-                      final product = productsState.products[index].data();
-                      int quantity = productCarts != null
-                          ? getQuantityByProduct(productCarts, product)
-                          : 0;
-
-                      return ProductItem(
-                        isLoadedQuantity:
-                            productCartsState.productCartsStatus ==
-                                ProductCartsStatus.loaded,
-                        product: product,
-                        quantity: quantity,
-                        onPressAddQuantity: () {
-                          BlocProvider.of<ProductsCartsBloc>(context).add(
-                            ProductCartsAdd(
-                              product: product,
-                            ),
-                          );
-
-                          manageStreamEmptyProductCarts(
-                            context,
-                            productCarts,
-                          );
-                        },
-                        onPressSubstractQuantity: () async {
-                          if (quantity == 0) return;
-
-                          BlocProvider.of<ProductsCartsBloc>(context).add(
-                            ProductCartsSubstract(
-                              product: product,
-                            ),
-                          );
-                          manageStreamEmptyProductCarts(
-                            context,
-                            productCarts,
-                          );
-                        },
-                      );
-                    },
-                  ),
+                            BlocProvider.of<ProductsCartsBloc>(context).add(
+                              ProductCartsSubstract(
+                                product: product,
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
                 );
               },
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -100,21 +92,5 @@ class HomeBody extends StatelessWidget {
       }
     }
     return quantities;
-  }
-
-  void manageStreamEmptyProductCarts(
-    BuildContext context,
-    productCarts,
-  ) {
-    if (productCarts == null) {
-      Timer(
-        Duration(milliseconds: 1000),
-        () {
-          BlocProvider.of<ProductsCartsBloc>(context).add(
-            ProductCartsLoad(),
-          );
-        },
-      );
-    }
   }
 }
