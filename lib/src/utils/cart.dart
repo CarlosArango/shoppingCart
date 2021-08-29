@@ -1,12 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shopping_cart/src/model/product_cart.dart';
 
-Map<String, dynamic> getInfoCart(
-    List<QueryDocumentSnapshot<ProductCart>> productCarts) {
+int getQuantities(
+  List<QueryDocumentSnapshot<ProductCart>> productCarts,
+) {
   final productsQuantity = productCarts.map((e) => e.data().quantity).toList();
-  final productsTotal = productCarts.map((e) => e.data().total).toList();
   final quantities =
       productsQuantity.reduce((value, element) => value + element);
+  return quantities;
+}
+
+double getTotal(
+  List<QueryDocumentSnapshot<ProductCart>> productCarts,
+) {
+  final productsTotal = productCarts.map((e) => e.data().total).toList();
   final total = productsTotal.reduce((value, element) => value! + element!);
-  return {"total": total, "quantities": quantities};
+  return total!.toDouble();
 }

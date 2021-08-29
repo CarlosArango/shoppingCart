@@ -50,7 +50,7 @@ class ProductsCartsBloc extends Bloc<ProductCartsEvent, ProductCartsState> {
           FirebaseAuth.instance.currentUser!.uid, "pending");
       final products =
           _productCartsRepository.getProductsCartByCartId(cart!.id);
-      yield ProductCartsState(
+      yield state.copyWith(
         productCarts: products,
         failureMsg: '',
         productCartsStatus: ProductCartsStatus.loaded,

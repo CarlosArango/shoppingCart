@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,8 +16,7 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<ProductsBloc, ProductsState>(
-      listener: (context, state) {},
+    return BlocBuilder<ProductsBloc, ProductsState>(
       builder: (context, productsState) {
         return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
           builder: (context, productCartsState) {
@@ -49,29 +50,29 @@ class HomeBody extends StatelessWidget {
                         product: product,
                         quantity: quantity,
                         onPressAddQuantity: () {
-                          if (productCarts == null) {
-                            BlocProvider.of<ProductsCartsBloc>(context)
-                                .add(ProductCartsLoad());
-                          }
                           BlocProvider.of<ProductsCartsBloc>(context).add(
                             ProductCartsAdd(
                               product: product,
                             ),
                           );
+
+                          manageStreamEmptyProductCarts(
+                            context,
+                            productCarts,
+                          );
                         },
-                        onPressSubstractQuantity: () {
+                        onPressSubstractQuantity: () async {
                           if (quantity == 0) return;
 
-                          if (productCarts == null) {
-                            BlocProvider.of<ProductsCartsBloc>(context)
-                                .add(ProductCartsLoad());
-                          }
                           BlocProvider.of<ProductsCartsBloc>(context).add(
                             ProductCartsSubstract(
                               product: product,
                             ),
                           );
-                          if (productCarts == null) {}
+                          manageStreamEmptyProductCarts(
+                            context,
+                            productCarts,
+                          );
                         },
                       );
                     },
@@ -99,5 +100,21 @@ class HomeBody extends StatelessWidget {
       }
     }
     return quantities;
+  }
+
+  void manageStreamEmptyProductCarts(
+    BuildContext context,
+    productCarts,
+  ) {
+    if (productCarts == null) {
+      Timer(
+        Duration(milliseconds: 1000),
+        () {
+          BlocProvider.of<ProductsCartsBloc>(context).add(
+            ProductCartsLoad(),
+          );
+        },
+      );
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_cart/src/global_blocs/auth/auth_bloc.dart';
+import 'package:shopping_cart/src/modules/blocs/cart/cart_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/products/products_bloc.dart';
 import 'package:shopping_cart/src/modules/cart/ui/cart.dart';
@@ -39,11 +40,22 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case CartRoute:
       return MaterialPageRoute(
-        builder: (context) => BlocProvider<ProductsCartsBloc>(
-          create: (context) => ProductsCartsBloc(
-            cartsRepository: CartsRepository(),
-            productCartsRepository: ProductCartsRepository(),
-          )..add(ProductCartsLoad()),
+        builder: (context) => MultiBlocProvider(
+          providers: [
+            BlocProvider<ProductsCartsBloc>(
+              create: (context) => ProductsCartsBloc(
+                cartsRepository: CartsRepository(),
+                productCartsRepository: ProductCartsRepository(),
+              )..add(
+                  ProductCartsLoad(),
+                ),
+            ),
+            BlocProvider<CartBloc>(
+              create: (context) => CartBloc(
+                cartsRepository: CartsRepository(),
+              ),
+            ),
+          ],
           child: Cart(),
         ),
       );

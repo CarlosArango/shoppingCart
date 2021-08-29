@@ -17,8 +17,14 @@ ThemeData _buildlightTheme() {
     accentColor: colors.secondary,
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
+        textStyle: MaterialStateProperty.all(
+          TextStyle(fontSize: 16),
+        ),
         padding: MaterialStateProperty.all(EdgeInsets.all(0)),
         alignment: Alignment.center,
+        minimumSize: MaterialStateProperty.all(
+          Size(double.infinity, 40),
+        ),
         backgroundColor: MaterialStateProperty.all(colors.primary),
       ),
     ),

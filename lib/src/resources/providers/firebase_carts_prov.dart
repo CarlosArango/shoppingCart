@@ -59,6 +59,8 @@ class FirestoreCartsProvider {
   }
 
   Future<void> update(Cart cart, id) async {
-    await cartsCollection.doc(id).set(cart);
+    await cartsCollection.doc(id).set(
+          cart,
+        );
   }
 }

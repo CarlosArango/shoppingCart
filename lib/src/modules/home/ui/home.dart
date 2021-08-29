@@ -6,7 +6,7 @@ import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc
 import 'package:shopping_cart/src/modules/home/widget/products_body.dart';
 import 'package:shopping_cart/src/resources/repositories/carts_repo.dart';
 import 'package:shopping_cart/src/resources/repositories/product_carts_repo.dart';
-import 'package:shopping_cart/src/utils/cart.dart';
+import 'package:shopping_cart/src/utils/cart.dart' as UtilCart;
 
 class HomeUI extends StatelessWidget {
   const HomeUI({Key? key}) : super(key: key);
@@ -68,7 +68,7 @@ class HomeUI extends StatelessWidget {
                                     snapshot.data!.docs.toList();
 
                                 int quantity = productCarts.length > 0
-                                    ? getInfoCart(productCarts)['quantities']
+                                    ? UtilCart.getQuantities(productCarts)
                                     : 0;
 
                                 return Text(

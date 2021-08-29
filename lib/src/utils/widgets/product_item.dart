@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shopping_cart/src/model/products.dart';
+import 'package:shopping_cart/src/utils/string.dart';
 import 'package:shopping_cart/src/utils/widgets/button_widget.dart';
 
 class ProductItem extends StatelessWidget {
@@ -36,13 +37,13 @@ class ProductItem extends StatelessWidget {
                   Container(
                     child: Text(
                       product.name,
-                      style: Theme.of(context).textTheme.caption,
+                      style: Theme.of(context).textTheme.headline5,
                     ),
                   ),
                   Container(
                     child: Text(
-                      product.price.toString(),
-                      style: Theme.of(context).textTheme.caption,
+                      "\$${format(product.price)}",
+                      style: Theme.of(context).textTheme.overline,
                     ),
                   ),
                 ],

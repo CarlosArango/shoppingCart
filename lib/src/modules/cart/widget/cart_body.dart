@@ -2,10 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shopping_cart/src/model/product_cart.dart';
+import 'package:shopping_cart/src/modules/blocs/cart/cart_bloc.dart';
 import 'package:shopping_cart/src/modules/blocs/product_carts/product_carts_bloc.dart';
-import 'package:shopping_cart/src/utils/cart.dart';
+
 import 'package:shopping_cart/src/utils/string.dart';
+import 'package:shopping_cart/src/utils/widgets/button_widget.dart';
 import 'package:shopping_cart/src/utils/widgets/product_item.dart';
+import 'package:shopping_cart/src/utils/cart.dart' as UtilCart;
 
 class CartBody extends StatelessWidget {
   const CartBody({Key? key}) : super(key: key);
@@ -18,19 +21,35 @@ class CartBody extends StatelessWidget {
           stream: state.productCarts,
           builder: (BuildContext context,
               AsyncSnapshot<QuerySnapshot<ProductCart>> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Cart empty",
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+                    Container(
+                      width: 150,
+                      child: ButtonWidget(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          title: "Go Home"),
+                    )
+                  ],
+                ),
+              );
+            }
             if (snapshot.hasError) {
               return Text('Something went wrong');
             }
 
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("Loading");
-            }
             if (snapshot.connectionState == ConnectionState.active) {
               final productCarts = snapshot.data!.docs
                   .where((element) => element.data().quantity > 0)
                   .toList();
-
-              final infoCart = getInfoCart(productCarts);
 
               return Stack(
                 children: [
@@ -64,39 +83,61 @@ class CartBody extends StatelessWidget {
                             );
                           },
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              child: Text("Cantidad de productos:"),
-                            ),
-                            Container(
-                              child: Text(infoCart['quantities'].toString()),
-                            ),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Cantidad de productos",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ),
+                              Text(
+                                UtilCart.getQuantities(productCarts).toString(),
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Container(
-                              child: Text("Total:"),
-                            ),
-                            Container(
-                              child: Text("\$${format(infoCart['total'])}"),
-                            ),
-                          ],
+                        Divider(),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  "Total:",
+                                  style: Theme.of(context).textTheme.headline6,
+                                ),
+                              ),
+                              Text(
+                                "\$${format(UtilCart.getTotal(productCarts))}",
+                                style: Theme.of(context).textTheme.headline5,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          height: 40,
+                          color: Colors.white,
                         ),
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: Size(double.infinity,
-                                  30), // double.infinity is the width and 30 is the height
-                            ),
-                            child: Text("Hola"),
-                            onPressed: () {},
+                            child: Text("Comprar"),
+                            onPressed: () {
+                              BlocProvider.of<CartBloc>(context).add(
+                                CartButtonBuyPressed(
+                                  cartId: productCarts[0].data().cartId,
+                                  productsCart: productCarts,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -106,8 +147,8 @@ class CartBody extends StatelessWidget {
               );
             }
 
-            return Container(
-              child: Text("Loading..."),
+            return Center(
+              child: CircularProgressIndicator(),
             );
           },
         );
