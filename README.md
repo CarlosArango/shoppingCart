@@ -1,16 +1,21 @@
 # shopping_cart
 
-A new Flutter project.
+Shopping cart
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This project is about a shopping cart using bloc to a tecnical test in TUL - Available just for iOS
 
-A few resources to get you started if this is your first Flutter project:
+## Version
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+- Flutter 2.2.3
+- Dart 2.13.4
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Libraries
+
+- Firebase like serverless
+- BLoc pattern
+
+## RUN
+
+flutter run
