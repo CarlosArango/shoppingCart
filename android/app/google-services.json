@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "91575030384",
+    "project_id": "tulcart-79a6b",
+    "storage_bucket": "tulcart-79a6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:91575030384:android:609da2934ca97a5ff05ab5",
+        "android_client_info": {
+          "package_name": "com.tulcart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "91575030384-brjjsg4v86ddjfp7h7pp6levpm9kfdrm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2uZDF62d1kQUUhweIiie6V1FuGEmtL0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "91575030384-brjjsg4v86ddjfp7h7pp6levpm9kfdrm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "91575030384-5ecv87iei8gp7i83g9c3446tu5h61ia5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tulcart"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -15,7 +15,10 @@ class CartBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProductsCartsBloc, ProductCartsState>(
       builder: (context, state) {
-        final productCarts = state.productCarts;
+        final productCarts = state.productCarts
+            .where((element) => element.data().quantity > 0)
+            .toList();
+
         if (productCarts.isEmpty) {
           return Center(
             child: Column(
